@@ -48,29 +48,31 @@ public class BidServer{
 		try(ServerSocket ss = new ServerSocket(31415)){ // You can reserve any port
 
 			while(true){	
-				
+
 				Socket s = ss.accept();	
 				System.out.println("Welcome to the Server!");
 				InputStream is = s.getInputStream();
 				ObjectInputStream ois = new ObjectInputStream(is);
-				String command = (String) ois.readObject();
-				AuctionItem itemDealtWith = (AuctionItem) ois.readObject(); //ASK PROF ABOUT how to read multiple things
-	
+				String command;
+				AuctionItem itemDealtWith;
+				while((command = (String) ois.readObject()) != null)
+					itemDealtWith = (AuctionItem) ois.readObject(); //ASK PROF ABOUT how to read multiple things
+
 				if(command.equalsIgnoreCase("ADD")){
-					
+
 				}
 				else if(command.equalsIgnoreCase("BID")){
-					
+
 				}
 				else if(command.equalsIgnoreCase("DELETE")){
-					
+
 				}
 				else if(command.equalsIgnoreCase("UPDATE")){
-					
+
 				}
-				
-					
-				
+
+
+
 			}
 
 
