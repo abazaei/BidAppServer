@@ -21,6 +21,9 @@ import java.util.List;
 
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.example.auctionapplicationIntermed.CrudModel;
 import com.example.auctionapplicationIntermed.AuctionItem;
 import com.example.auctionapplicationIntermed.DateParser;
@@ -54,12 +57,31 @@ public class BidServer{
 
 					switch(command.getCommand()){
 					case DELETE:
+						
+						//ItemServiceClient.deleteItem(Integer.valueOf(command.getArgs()));
 						break;
 					case ADD:
+						Pattern pattern = Pattern.compile(("ID: ([0-9]*) NAME: ([a-z]*[A-Z]*) DESC: ([a-z]*[A-Z]*) STARTPRICE: ([0-9]*\\.[0-9]*) STARTDATE: ([0-9]{1,2}/[0-9]{1,2}/[0-9]{1,4}) ENDDATE: ([0-9]/[0-9]/[0-9]*) IMGREF: (.*)"));
+						Matcher matcher = pattern.matcher(command.getArgs());
+						if(matcher.matches()){
+							//ItemServiceClient.addItem(new Item(organize the groups in the way you want.
+						}
 						break;
 					case BID:
+						Pattern pattern2 = Pattern.compile(("ID: ([0-9]*) BIDUP: ([0-9]*\\.[0-9]*)"));
+						Matcher matcher2 = pattern2.matcher(command.getArgs());
+						//the Args should contain the value to increase by.
+						//ITemServiceClient.bid(Integer.valueOf(matcher2.group(1)),Long.valueOf(matcher2.group(2)))
+						
+						
 						break;
 					case UPDATE:
+						Pattern pattern3 = Pattern.compile(("ID: ([0-9]*) NAME: ([a-z]*[A-Z]*) DESC: ([a-z]*[A-Z]*) STARTPRICE: ([0-9]*\\.[0-9]*) STARTDATE: ([0-9]{1,2}/[0-9]{1,2}/[0-9]{1,4}) ENDDATE: ([0-9]/[0-9]/[0-9]*) IMGREF: (.*)"));
+						Matcher matcher3 = pattern3.matcher(command.getArgs());
+						if(matcher3.matches()){
+							//ItemServiceClient.deleteItem(Integer.valueOf(matcher3.group(1)
+							//ItemServiceClient.addItem(new Item(organize the groups in the way you want.
+						}
 						break;
 					}
 				}
