@@ -21,13 +21,7 @@ import java.util.List;
 
 
 
-
-
-
-
-
-
-
+import com.example.auctionapplicationIntermed.CrudModel;
 import com.example.auctionapplicationIntermed.AuctionItem;
 import com.example.auctionapplicationIntermed.DateParser;
 import com.example.auctionapplicationIntermed.ItemClientException;
@@ -53,22 +47,21 @@ public class BidServer{
 				System.out.println("Welcome to the Server!");
 				InputStream is = s.getInputStream();
 				ObjectInputStream ois = new ObjectInputStream(is);
-				String command;
+				CrudModel command;
 				AuctionItem itemDealtWith;
-				while((command = (String) ois.readObject()) != null)
+				while((command = (CrudModel) ois.readObject()) != null){
 					itemDealtWith = (AuctionItem) ois.readObject(); //ASK PROF ABOUT how to read multiple things
 
-				if(command.equalsIgnoreCase("ADD")){
-
-				}
-				else if(command.equalsIgnoreCase("BID")){
-
-				}
-				else if(command.equalsIgnoreCase("DELETE")){
-
-				}
-				else if(command.equalsIgnoreCase("UPDATE")){
-
+					switch(command.getCommand()){
+					case DELETE:
+						break;
+					case ADD:
+						break;
+					case BID:
+						break;
+					case UPDATE:
+						break;
+					}
 				}
 
 
