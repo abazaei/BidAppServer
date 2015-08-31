@@ -42,18 +42,19 @@ public class BidServer{
 	//file.createNewFile();
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 
+		System.out.println("Started Server.");
 		try(ServerSocket ss = new ServerSocket(31415)){ // You can reserve any port
 
 			while(true){	
+				System.out.println("Welcome to the Server!");
 
 				Socket s = ss.accept();	
-				System.out.println("Welcome to the Server!");
+				System.out.println("Accepted Connection...");
 				InputStream is = s.getInputStream();
 				ObjectInputStream ois = new ObjectInputStream(is);
 				CrudModel command;
-				AuctionItem itemDealtWith;
-				while((command = (CrudModel) ois.readObject()) != null){
-					itemDealtWith = (AuctionItem) ois.readObject(); //ASK PROF ABOUT how to read multiple things
+				if((command = (CrudModel) ois.readObject()) != null){
+					System.out.println(command);
 
 					switch(command.getCommand()){
 					case DELETE:
