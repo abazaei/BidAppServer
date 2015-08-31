@@ -84,6 +84,8 @@ public class BidServer{
 							//ItemServiceClient.addItem(new Item(organize the groups in the way you want.
 						}
 						break;
+					case READ:
+						
 					}
 				}
 
