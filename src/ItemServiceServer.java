@@ -1,6 +1,11 @@
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Stack;
+
+
 
 import com.example.auctionapplication.search.AndPredicate;
 import com.example.auctionapplication.search.CollectionUtils;
@@ -8,9 +13,42 @@ import com.example.auctionapplication.search.Contain;
 import com.example.auctionapplication.search.OrPredicate;
 import com.example.auctionapplication.search.Predicate;
 import com.example.auctionapplicationIntermed.AuctionItem;
+import com.example.auctionapplicationIntermed.ItemClientException;
+import com.example.auctionapplicationIntermed.ItemNotFoundException;
 
 
 public class ItemServiceServer {
+	
+	public void itemBid(Long id, BigDecimal bidIncrease) throws Exception {
+		
+		if(BidServer.itemlist.get(id).getEndDate().after(new Date())){
+			
+			BidServer.itemlist.get(id).setBidPrice(BidServer.itemlist.get(id).getBidPrice().add(bidIncrease));
+			
+		}
+		else
+			throw new ItemClientException("Can't bid on this time");
+		//NOT PROPERLY READING IN BIDS! It is not BIDDING!
+	}
+
+
+	public void deleteItemInList(Long valueOf) throws Exception {
+
+		if(BidServer.itemlist.get(valueOf)==null){
+			//null because log is ran each time the window is created
+			throw new ItemNotFoundException("No Item with the selected id!?");
+			
+			
+		}
+
+
+		BidServer.itemlist.remove(valueOf);
+
+	}
+	public void updateItemToList(AuctionItem auctionItem) {
+		BidServer.itemlist.put((long) auctionItem.getItemID(), auctionItem);
+	}
+	
 	public Collection<AuctionItem> search(String query){
 
 		String [ ] words = query.split(" ");
