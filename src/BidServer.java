@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,7 +35,8 @@ import com.example.auctionapplicationIntermed.ItemNotFoundException;
 public class BidServer{
 
 	static HashMap<Long, AuctionItem> itemlist = new HashMap<>();
-	File itemdb = new File("/sdcard/itemDB.txt");
+	File itemdb = new File("/itemDB.txt");
+	private static int AvailID = 0;
 
 	//showDirectory
 	//File directoy = new File(".");
@@ -41,7 +44,7 @@ public class BidServer{
 	//File file = new File("./sdcard", "items");
 	//file.createNewFile();
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-
+		ItemServiceServer iss = new ItemServiceServer();
 		System.out.println("Started Server.");
 		try(ServerSocket ss = new ServerSocket(31415)){ // You can reserve any port
 
@@ -58,14 +61,19 @@ public class BidServer{
 
 					switch(command.getCommand()){
 					case DELETE:
-						
+
 						//ItemServiceClient.deleteItem(Integer.valueOf(command.getArgs()));
 						break;
 					case ADD:
-						Pattern pattern = Pattern.compile(("ID: ([0-9]*) NAME: ([a-z]*[A-Z]*) DESC: ([a-z]*[A-Z]*) STARTPRICE: ([0-9]*\\.[0-9]*) STARTDATE: ([0-9]{1,2}/[0-9]{1,2}/[0-9]{1,4}) ENDDATE: ([0-9]/[0-9]/[0-9]*) IMGREF: (.*)"));
+						System.out.println("ADD");
+						Pattern pattern = Pattern.compile(("NAME: ([a-z]*[A-Z]*) DESC: ([a-z]*[A-Z]*) STARTPRICE: ([0-9]*\\.*[0-9]*) STARTDATE: ([0-9]{1,2}/[0-9]{1,2}/[0-9]{1,4}) ENDDATE: ([0-9]/[0-9]/[0-9]*)"));
 						Matcher matcher = pattern.matcher(command.getArgs());
+						// price name desc id start end
+						iss.addItem(new AuctionItem( BigDecimal.valueOf(Double.valueOf(matcher.group(2))), matcher.group(0), matcher.group(1), getHighestID(), DateParser.parse(matcher.group(3)), DateParser.parse(matcher.group(4))));
 						if(matcher.matches()){
+							System.out.println("Adding: " + matcher.group(0));
 							//ItemServiceClient.addItem(new Item(organize the groups in the way you want.
+							
 						}
 						break;
 					case BID:
@@ -73,8 +81,8 @@ public class BidServer{
 						Matcher matcher2 = pattern2.matcher(command.getArgs());
 						//the Args should contain the value to increase by.
 						//ITemServiceClient.bid(Integer.valueOf(matcher2.group(1)),Long.valueOf(matcher2.group(2)))
-						
-						
+
+
 						break;
 					case UPDATE:
 						Pattern pattern3 = Pattern.compile(("ID: ([0-9]*) NAME: ([a-z]*[A-Z]*) DESC: ([a-z]*[A-Z]*) STARTPRICE: ([0-9]*\\.[0-9]*) STARTDATE: ([0-9]{1,2}/[0-9]{1,2}/[0-9]{1,4}) ENDDATE: ([0-9]/[0-9]/[0-9]*) IMGREF: (.*)"));
@@ -85,22 +93,52 @@ public class BidServer{
 						}
 						break;
 					case READ:
-						
+						System.out.println("READ");
+						//hashmap w/ items from search
+						//nextID int
+						//getItembyID
+
+						ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
+
+						switch(command.getArgs()){
+						case "GETHASHMAP":
+//							oos.writeObject(getSearchedItems());
+							break;
+						case "GETNEXTID":
+							//sync this
+//							synchronize(AvailID) { 
+//							oos.writeObject(AvailID++);
+//							}
+							break;
+						case "GETITEMBYID":
+							break;
+						default:
+							//FIx THIS
+							oos.writeObject(itemlist);
+							System.out.println("the thing wants to read");
+							break;
+						}
 					}
 				}
-
-
-
 			}
-
-
-
-		}}
-
-
+		}
+	}
+	
+	private static int getHighestID(){
+		return 9;
+	}
+	
 	public void writeToDB(AuctionItem newitem) throws IOException{
+		
+		RandomAccessFile raf = new RandomAccessFile(itemdb, "rw");
 		FileWriter fw = new FileWriter(itemdb,true);
 		BufferedReader br = new BufferedReader(new FileReader(itemdb));
+		
+		if(br.read() != 'A' && br.read() != 'D' && br.read() != 'B' && br.read() != 'U'){
+			raf.seek(0);
+			raf.write(br.readLine().getBytes());
+			raf.close();
+		}
 
 		fw.write("ADD;"+ newitem.getItemID() + ";" + newitem.getName()+";"+newitem.getDescription()+";"+newitem.getBidPrice()+";"+DateParser.format(newitem.getStartDate())+";"
 				+DateParser.format(newitem.getEndDate()));
@@ -112,6 +150,7 @@ public class BidServer{
 
 
 		BufferedReader br = new BufferedReader(new FileReader(itemdb));
+		br.readLine();
 		while(true){
 			String line = br.readLine();
 			if(line != null){

@@ -1,9 +1,11 @@
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Stack;
+
 
 
 
@@ -31,7 +33,11 @@ public class ItemServiceServer {
 		//NOT PROPERLY READING IN BIDS! It is not BIDDING!
 	}
 
+	public static void addItem(AuctionItem newitem) throws IOException{
+		//dbc.writeToDB(newitem);
 
+		BidServer.itemlist.put((long) newitem.getItemID(), newitem);
+	}
 	public void deleteItemInList(Long valueOf) throws Exception {
 
 		if(BidServer.itemlist.get(valueOf)==null){
@@ -111,3 +117,5 @@ public class ItemServiceServer {
 		//timeCheck(the return) , but I took it out becaues of compiler errors
 	}
 }
+
+
